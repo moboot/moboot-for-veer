@@ -1,8 +1,9 @@
 /*
- * Copyright (c) 2008, Google Inc.
+ * Copyright (c) 2009, Google Inc.
  * All rights reserved.
+ * Copyright (c) 2009-2011, Code Aurora Forum. All rights reserved.
  *
- * Copyright (c) 2009-2010, Code Aurora Forum. All rights reserved.
+ * Copyright (c) 2012 xndcn
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -11,8 +12,11 @@
  *    notice, this list of conditions and the following disclaimer.
  *  * Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the 
+ *    the documentation and/or other materials provided with the
  *    distribution.
+ *  * Neither the name of Google, Inc. nor the names of its contributors
+ *    may be used to endorse or promote products derived from this
+ *    software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -21,47 +25,42 @@
  * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
  * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
  * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
- * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED 
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
  * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
 
-#ifndef __DEV_FBCON_H
-#define __DEV_FBCON_H
+#include <debug.h>
+#include "smem.h"
+#include <platform/iomap.h>
+#include <platform/irqs.h>
 
-#define FB_FORMAT_RGB565 0
-#define FB_FORMAT_RGB888 1
+extern unsigned int mmc_boot_main(unsigned char slot, unsigned int base);
+static unsigned mmc_sdc_base[] = { MSM_SDC1_BASE, MSM_SDC2_BASE, MSM_SDC3_BASE, MSM_SDC4_BASE};
 
-struct fbcon_config {
-	void		*base;
-	unsigned	width;
-	unsigned	height;
-	unsigned	stride;
-	unsigned	bpp;
-	unsigned	format;
+void target_early_init()
+{
+	//close irq gpt0, which is used by bootie
+	mask_interrupt(INT_GPT0_TIMER_EXP);
+}
 
-	void		(*update_start)(void);
-	int		(*update_done)(void);
-};
+void target_init()
+{
+	unsigned base_addr;
+	unsigned char slot;	
+	struct smem_ram_ptable ram_ptable;
+	
+	display_init();
+	printf("scratch: 0x%x\n", target_get_scratch_address());
+	
+	slot = 2;
+	base_addr = mmc_sdc_base[slot-1];
+	mmc_boot_main(slot, base_addr);
+}
 
-void fbcon_flush();
-void fbcon_setup(struct fbcon_config *cfg);
-void fbcon_putc(char c);
-void fbcon_clear(void);
-struct fbcon_config* fbcon_display(void);
-
-#if DISPLAY_TYPE_TOUCHPAD
-void fbcon_set_colors(
-		unsigned char bg_r,
-		unsigned char bg_g,
-		unsigned char bg_b,
-		unsigned char fg_r,
-		unsigned char fg_g,
-		unsigned char fg_b
-		);
-#else
-static void fbcon_set_colors(unsigned bg, unsigned fg);
-#endif
-#endif /* __DEV_FBCON_H */
+void reboot_device(unsigned reboot_reason)
+{       
+    reboot(reboot_reason);
+}

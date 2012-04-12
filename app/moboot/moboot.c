@@ -275,7 +275,7 @@ void moboot_init(const struct app_descriptor *app)
 	}
 
 
-    if (fs_mount("/boot", "/dev/mmcblk0p13")) {
+    if (fs_mount("/boot", "/dev/mmcblk0p14")) {
 		printf("\nUnable to mount /boot, exiting.\n");
 		while (1) {
 			thread_sleep(20);
@@ -392,7 +392,7 @@ void moboot_init(const struct app_descriptor *app)
 	}
 	
 	if (counted_images == 0) {
-		set_menu_entry("boot", BOOT_FS, "/boot/uImage-2.6.35-palm-tenderloin", "default");
+		set_menu_entry("boot", BOOT_FS, "/boot/uImage-2.6.29-palm-shank", "default");
 	}
 
 
@@ -510,6 +510,7 @@ void moboot_init(const struct app_descriptor *app)
 					sprintf(splash_path, "/boot/moboot.verbose.%s", 
 								entries[act]->name);
 
+					splash_ptr = NULL;
 					splash_sz = fs_load_file_mem(splash_path, &splash_ptr);
 
 					if (splash_sz > 0) {
@@ -521,6 +522,7 @@ void moboot_init(const struct app_descriptor *app)
 					if (splash_ptr) free(splash_ptr);
 
 
+					splash_ptr = NULL;
 					/* check for splash image */
 					sprintf(splash_path, "/boot/moboot.splash.%s.tga", 
 								entries[act]->name);

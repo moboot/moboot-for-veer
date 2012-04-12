@@ -1,8 +1,6 @@
 /*
- * Copyright (c) 2008, Google Inc.
+ * Copyright (c) 2011, James Sullins
  * All rights reserved.
- *
- * Copyright (c) 2009-2010, Code Aurora Forum. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,40 +26,22 @@
  * SUCH DAMAGE.
  */
 
-#ifndef __DEV_FBCON_H
-#define __DEV_FBCON_H
+#ifndef _GPIOKEYS_H
+#define _GPIOKEYS_H
 
-#define FB_FORMAT_RGB565 0
-#define FB_FORMAT_RGB888 1
+#define KEY_UP		1
+#define KEY_LEFT	KEY_UP
+#define KEY_DOWN	2
+#define KEY_RIGHT	KEY_DOWN
+#define KEY_SELECT	4
+#define KEY_CENTER	KEY_SELECT
+#define KEY_ALL		(KEY_UP|KEY_DOWN|KEY_SELECT)
 
-struct fbcon_config {
-	void		*base;
-	unsigned	width;
-	unsigned	height;
-	unsigned	stride;
-	unsigned	bpp;
-	unsigned	format;
+#define KEY_UP_GPIO	37
+#define KEY_DOWN_GPIO	43
+#define KEY_SELECT_GPIO	40
 
-	void		(*update_start)(void);
-	int		(*update_done)(void);
-};
+extern int gpiokeys_poll(unsigned keylist);
+extern void gpiokeys_wait_select();
 
-void fbcon_flush();
-void fbcon_setup(struct fbcon_config *cfg);
-void fbcon_putc(char c);
-void fbcon_clear(void);
-struct fbcon_config* fbcon_display(void);
-
-#if DISPLAY_TYPE_TOUCHPAD
-void fbcon_set_colors(
-		unsigned char bg_r,
-		unsigned char bg_g,
-		unsigned char bg_b,
-		unsigned char fg_r,
-		unsigned char fg_g,
-		unsigned char fg_b
-		);
-#else
-static void fbcon_set_colors(unsigned bg, unsigned fg);
 #endif
-#endif /* __DEV_FBCON_H */

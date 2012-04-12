@@ -125,6 +125,7 @@ enum {
 	PCOM_NV_WRITE_HIGH_BITS,
     PCOM_RPC_GPIO_TLMM_CONFIG_EX = 0x25,
 	PCOM_NUM_CMDS,
+	PCOM_RESET_CHIP_IMM = 42,
 };
 
 enum {
@@ -275,7 +276,11 @@ void mddi_clock_init(unsigned num, unsigned rate)
 
 void reboot(unsigned reboot_reason)
 {
-        msm_proc_comm(PCOM_RESET_CHIP, &reboot_reason, 0);
+#ifdef PLATFORM_VEER
+        msm_proc_comm(PCOM_RESET_CHIP_IMM, &reboot_reason, 0);
+#else
+	msm_proc_comm(PCOM_RESET_CHIP, &reboot_reason, 0);
+#endif
         for (;;) ;
 }
 

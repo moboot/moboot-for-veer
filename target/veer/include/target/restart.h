@@ -1,8 +1,6 @@
 /*
- * Copyright (c) 2008, Google Inc.
+ * Copyright (c) 2011, James Sullins
  * All rights reserved.
- *
- * Copyright (c) 2009-2010, Code Aurora Forum. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,40 +26,21 @@
  * SUCH DAMAGE.
  */
 
-#ifndef __DEV_FBCON_H
-#define __DEV_FBCON_H
+#ifndef _PLATFORM_APQ_TOUCHPAD_RESTART_H
+#define _PLATFORM_APQ_TOUCHPAD_RESTART_H
 
-#define FB_FORMAT_RGB565 0
-#define FB_FORMAT_RGB888 1
+/* Palm specific */
+#define RESTART_REASON_SHUTDOWN   0x6f656d00
+#define RESTART_REASON_RECOVER    0x6f656d11
+#define RESTART_REASON_PANIC      0x6f656d22
+#define RESTART_REASON_DFU        0x6f656d33
+#define RESTART_REASON_REBOOT     0x6f656d44
+#define RESTART_REASON_LATE_BOOT  0x6f656d55
+#define RESTART_REASON_UPDATE     0x6f656d66
+#define RESTART_REASON_UNKNOWN    0x77665501
 
-struct fbcon_config {
-	void		*base;
-	unsigned	width;
-	unsigned	height;
-	unsigned	stride;
-	unsigned	bpp;
-	unsigned	format;
+/* misc */
+#define RESTART_REASON_BOOTLOADER	0x77665500
+#define RESTART_REASON_RECOVERY		0x77665502
 
-	void		(*update_start)(void);
-	int		(*update_done)(void);
-};
-
-void fbcon_flush();
-void fbcon_setup(struct fbcon_config *cfg);
-void fbcon_putc(char c);
-void fbcon_clear(void);
-struct fbcon_config* fbcon_display(void);
-
-#if DISPLAY_TYPE_TOUCHPAD
-void fbcon_set_colors(
-		unsigned char bg_r,
-		unsigned char bg_g,
-		unsigned char bg_b,
-		unsigned char fg_r,
-		unsigned char fg_g,
-		unsigned char fg_b
-		);
-#else
-static void fbcon_set_colors(unsigned bg, unsigned fg);
 #endif
-#endif /* __DEV_FBCON_H */

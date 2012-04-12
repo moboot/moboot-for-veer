@@ -276,11 +276,11 @@ struct fbcon_config *mddi_init(void)
 	n = mddi_init_regs();
 	dprintf(INFO, "mddi version: 0x%08x\n", n);
 
-	//mddi_get_caps(&client_caps);
+	mddi_get_caps(&client_caps);
 	//if(!(client_caps.length == 0x4a && client_caps.type == 0x42))
-	{
-	    mddi_set_caps(&client_caps);
-	}
+	//{
+	//    mddi_set_caps(&client_caps);
+	//}
 
 	fb_cfg.width = client_caps.bitmap_width;
 	fb_cfg.stride = fb_cfg.width;

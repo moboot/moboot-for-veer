@@ -1,8 +1,5 @@
 /*
- * Copyright (c) 2008, Google Inc.
- * All rights reserved.
- *
- * Copyright (c) 2009-2010, Code Aurora Forum. All rights reserved.
+ * Copyright (c) 2011, Code Aurora Forum. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -11,7 +8,7 @@
  *    notice, this list of conditions and the following disclaimer.
  *  * Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the 
+ *    the documentation and/or other materials provided with the
  *    distribution.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -21,47 +18,29 @@
  * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
  * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
  * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
- * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED 
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
  * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
 
-#ifndef __DEV_FBCON_H
-#define __DEV_FBCON_H
+#ifndef __PLATFORM_MSM7X30_PANEL_H
+#define __PLATFORM_MSM7X30_PANEL_H
 
-#define FB_FORMAT_RGB565 0
-#define FB_FORMAT_RGB888 1
+#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 
-struct fbcon_config {
-	void		*base;
-	unsigned	width;
-	unsigned	height;
-	unsigned	stride;
-	unsigned	bpp;
-	unsigned	format;
+#define LDO08_CNTRL            0x011
+#define LDO12_CNTRL            0x015
+#define LDO15_CNTRL            0x089
+#define LDO16_CNTRL            0x08A
+#define LDO20_CNTRL            0x11F  /* PM8058 only */
+#define LDO_LOCAL_EN_BMSK      0x80
 
-	void		(*update_start)(void);
-	int		(*update_done)(void);
-};
+#define SPI_SCLK    45
+#define SPI_CS      46
+#define SPI_MOSI    47
+#define SPI_MISO    48
 
-void fbcon_flush();
-void fbcon_setup(struct fbcon_config *cfg);
-void fbcon_putc(char c);
-void fbcon_clear(void);
-struct fbcon_config* fbcon_display(void);
 
-#if DISPLAY_TYPE_TOUCHPAD
-void fbcon_set_colors(
-		unsigned char bg_r,
-		unsigned char bg_g,
-		unsigned char bg_b,
-		unsigned char fg_r,
-		unsigned char fg_g,
-		unsigned char fg_b
-		);
-#else
-static void fbcon_set_colors(unsigned bg, unsigned fg);
 #endif
-#endif /* __DEV_FBCON_H */

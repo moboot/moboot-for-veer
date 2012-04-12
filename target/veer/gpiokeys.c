@@ -1,8 +1,6 @@
 /*
- * Copyright (c) 2008, Google Inc.
+ * Copyright (c) 2011, James Sullins
  * All rights reserved.
- *
- * Copyright (c) 2009-2010, Code Aurora Forum. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,40 +26,52 @@
  * SUCH DAMAGE.
  */
 
-#ifndef __DEV_FBCON_H
-#define __DEV_FBCON_H
+#include <dev/gpio.h>
+#include <target/gpiokeys.h>
+#include <kernel/thread.h>
 
-#define FB_FORMAT_RGB565 0
-#define FB_FORMAT_RGB888 1
+int gpiokeys_poll(unsigned keylist) {
 
-struct fbcon_config {
-	void		*base;
-	unsigned	width;
-	unsigned	height;
-	unsigned	stride;
-	unsigned	bpp;
-	unsigned	format;
+	int keys_result = 0;
+	if (keylist & KEY_UP) {
+		if (!gpio_get(KEY_UP_GPIO)) {
+			keys_result += KEY_UP;
+		}
+	}
 
-	void		(*update_start)(void);
-	int		(*update_done)(void);
-};
+	if (keylist & KEY_DOWN) {
+		if (!gpio_get(KEY_DOWN_GPIO)) {
+			keys_result += KEY_DOWN;
+		}
+	}
 
-void fbcon_flush();
-void fbcon_setup(struct fbcon_config *cfg);
-void fbcon_putc(char c);
-void fbcon_clear(void);
-struct fbcon_config* fbcon_display(void);
+	if (keylist & KEY_SELECT) {
+		if (gpio_get(KEY_SELECT_GPIO) == 0) {
+			keys_result += KEY_SELECT;
+		}
+	}
 
-#if DISPLAY_TYPE_TOUCHPAD
-void fbcon_set_colors(
-		unsigned char bg_r,
-		unsigned char bg_g,
-		unsigned char bg_b,
-		unsigned char fg_r,
-		unsigned char fg_g,
-		unsigned char fg_b
-		);
-#else
-static void fbcon_set_colors(unsigned bg, unsigned fg);
-#endif
-#endif /* __DEV_FBCON_H */
+	return keys_result;
+}
+
+
+void gpiokeys_wait_select()
+{
+	unsigned keys, is_pressed;
+
+	while (gpiokeys_poll(KEY_ALL)) {
+		thread_sleep(20);
+	}
+
+	is_pressed = gpiokeys_poll(KEY_ALL);
+	while (1) {
+		thread_sleep(20);
+		keys = gpiokeys_poll(KEY_ALL);
+		if (is_pressed && !keys) {
+			if (is_pressed & KEY_SELECT) {
+				return;
+			}
+		}
+		is_pressed = keys;
+	}
+}
