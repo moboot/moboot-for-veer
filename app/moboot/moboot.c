@@ -309,7 +309,7 @@ void moboot_init(const struct app_descriptor *app)
 
 	if (tile_sz > 0) {
 		tile_surface = tga_decode(tile_ptr, tile_sz,
-									GFX_FORMAT_RGB_x888);
+									GFX_FORMAT_RGB_565);
 		struct display_info disp_info;
 		if (!display_surface) {
 			display_get_info(&disp_info);
@@ -533,7 +533,7 @@ void moboot_init(const struct app_descriptor *app)
 
 					if (splash_sz > 0) {
 						splash_surface = tga_decode(splash_ptr, splash_sz,
-													GFX_FORMAT_RGB_x888);
+													GFX_FORMAT_RGB_565);
 						struct display_info disp_info;
 						if (!display_surface) {
 							display_get_info(&disp_info);
