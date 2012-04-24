@@ -32,7 +32,7 @@
 #include <lib/uimage.h>
 #include <lib/atags.h>
 
-#define RAMDISK_ADDR 0x60000000
+#define RAMDISK_ADDR 0x0A000000
 
 char root_dev_ram[] = "/dev/ram0";
 char root_dev_noram[] = "/dev/mmcblk0p14";
