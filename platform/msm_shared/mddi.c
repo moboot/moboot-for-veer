@@ -282,6 +282,13 @@ struct fbcon_config *mddi_init(void)
 	//    mddi_set_caps(&client_caps);
 	//}
 
+#ifdef LCD_WIDTH
+	client_caps.bitmap_width = LCD_WIDTH;
+#endif
+#ifdef LCD_HEIGHT
+        client_caps.bitmap_height = LCD_HEIGHT;
+#endif
+
 	fb_cfg.width = client_caps.bitmap_width;
 	fb_cfg.stride = fb_cfg.width;
 	fb_cfg.height = client_caps.bitmap_height;
