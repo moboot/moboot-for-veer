@@ -46,11 +46,13 @@ struct fbcon_config {
 	int		(*update_done)(void);
 };
 
+void fbcon_flush();
 void fbcon_setup(struct fbcon_config *cfg);
 void fbcon_putc(char c);
 void fbcon_clear(void);
 struct fbcon_config* fbcon_display(void);
 
+#if DISPLAY_TYPE_TOUCHPAD
 void fbcon_set_colors(
 		unsigned char bg_r,
 		unsigned char bg_g,
@@ -59,5 +61,7 @@ void fbcon_set_colors(
 		unsigned char fg_g,
 		unsigned char fg_b
 		);
-
+#else
+static void fbcon_set_colors(unsigned bg, unsigned fg);
+#endif
 #endif /* __DEV_FBCON_H */
