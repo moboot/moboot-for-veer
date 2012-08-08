@@ -35,9 +35,9 @@
 #define RAMDISK_ADDR 0x60000000
 
 char root_dev_ram[] = "/dev/ram0";
-char root_dev_noram[] = "/dev/mmcblk0p13";
+char root_dev_noram[] = "/dev/mmcblk0p14";
 char tty_dev_fbcon[] = "tty1";
-char tty_dev_nofbcon[] = "ttyS0,115200n8";
+char tty_dev_nofbcon[] = "ttyS2,115200n8";
 char *root_dev;
 char *tty_dev;
 
@@ -64,8 +64,11 @@ void bootlinux_atags(void *kernel, unsigned *tags,
 	int have_cmdline = 0;
 
 	/* CORE */
-	*ptr++ = 2;
+	*ptr++ = 5;
 	*ptr++ = 0x54410001;
+	*ptr++ = 0;
+	*ptr++ = 0;
+	*ptr++ = 0;
 
 	if (ramdisk_size) {
 		*ptr++ = 4;
@@ -78,7 +81,7 @@ void bootlinux_atags(void *kernel, unsigned *tags,
 
 	*ptr++ = 3;
 	*ptr++ = 0x54410007;
-	*ptr++ = 3;
+	*ptr++ = 0;
 
 	if (cmdline && cmdline[0]) {
 		cmdline_len = strlen(cmdline);
@@ -174,7 +177,7 @@ unsigned bootlinux_uimage_mem(void *data, unsigned len, void (*callback)(),
 			);
 	} else {
 		sprintf(cmdline 
-			,"root=%s rootwait ro fbcon=disable console=ttyS0,115200n8 %s%s%s%s%s%s"
+			,"root=%s rootwait ro fbcon=disable console=ttyS2,115200n8 %s%s%s%s%s lcd_enable_vsync %s"
 			, root_dev
 			, atags_get_cmdline_arg(passed_atags, "fb")
 			, atags_get_cmdline_arg(passed_atags, "nduid")
@@ -190,14 +193,13 @@ unsigned bootlinux_uimage_mem(void *data, unsigned len, void (*callback)(),
 	printf("\nBooting...\n");
 
 	if (callback) callback();
-	
+
 #if 1 
-	bootlinux_atags(kernel_ep, (void *)0x40200010,
-		   cmdline, 3079, RAMDISK_ADDR, ramdisk_size);
+	bootlinux_atags(kernel_ep, (void *)0x00200100,
+		   cmdline, MACH_TYPE, RAMDISK_ADDR, ramdisk_size);
 #else
-	bootlinux_atags(kernel_ep, data, cmdline, 3079,
+	bootlinux_atags(kernel_ep, data, cmdline, MACH_TYPE,
 			RAMDISK_ADDR, ramdisk_size);
 #endif
 
 }
-
